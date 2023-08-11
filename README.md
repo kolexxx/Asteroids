@@ -1,7 +1,7 @@
 # Asteroids
 Classic arcade game remade in C++ and SDL3.
 
-![gameplay](https://github.com/kolexxx/Asteroids/assets/48793595/e0b6e1da-4369-4ad1-a1f1-0d5f623d6b41)
+![gameplay](https://github.com/kolexxx/Asteroids/assets/48793595/983afcd5-9f58-4ebd-a7bc-32f4a216f3c8)
 
 ## How to build
 
