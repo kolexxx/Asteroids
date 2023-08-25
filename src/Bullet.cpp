@@ -8,7 +8,7 @@
 Bullet::Bullet( Entity* owner, Vector2 position, float angle ) :
 	m_owner( owner ),
 	m_speed( WINDOW_WIDTH ),
-	m_timeUntilDelete( 1.f ),
+	m_timeUntilDelete( 0.5f ),
 	Entity( position, Vector2( 5, 5 ), angle )
 {
 	m_velocity = Vector2( cosf( m_angle ), sinf( m_angle ) ) * m_speed;

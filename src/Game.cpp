@@ -51,7 +51,7 @@ void Game::Loop()
 			{
 				Entity::ClearList();
 				s_player = new Player();
-				s_asteroidsToSpawn = 5;
+				s_asteroidsToSpawn = 4;
 			}
 		}
 		else
@@ -111,7 +111,7 @@ void Game::Quit()
 	s_isRunning = false;
 }
 
-uint32_t Game::s_asteroidsToSpawn = 5;
+uint32_t Game::s_asteroidsToSpawn = 4;
 TimeUntil Game::s_timeUntilSaucerSpawn = {};
 bool Game::s_isRunning = false;
 SDL_Window* Game::s_window = nullptr;
