@@ -11,10 +11,11 @@ Classic arcade game remade in C++ and SDL3.
 
 - ## Building
 1. Clone `git clone https://github.com/kolexxx/Asteroids.git`
-2. Create build directory inside of the project folder: `mkdir build`
-3. Navigate into the "build" folder: `cd build`
-4. Generate the build system: `cmake ..`
-5. Compile/link the project: `cmake --build .`
+2. Navigate into the project folder: `cd Asteroids`
+3. Create build directory inside of the project folder: `mkdir build`
+4. Navigate into the "build" folder: `cd build`
+5. Generate the build system: `cmake ..`
+6. Compile/link the project: `cmake --build .`
 
 # Credits
 - Sounds: http://www.classicgaming.cc/classics/asteroids/sounds
