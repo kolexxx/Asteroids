@@ -5,12 +5,14 @@
 #include "Game.hpp"
 #include "Time.hpp"
 
-Bullet::Bullet( Vector2 position, float angle ) :
-	Entity( position, Vector2( 5, 5 ), angle ),
+Bullet::Bullet( Entity* owner, Vector2 position, float angle ) :
+	m_owner( owner ),
 	m_speed( WINDOW_WIDTH ),
-	m_timeUntilDelete( 1.f )
+	m_timeUntilDelete( 1.f ),
+	Entity( position, Vector2( 5, 5 ), angle )
 {
 	m_velocity = Vector2( cosf( m_angle ), sinf( m_angle ) ) * m_speed;
+	Sound::Play( "res/fire.wav" );
 }
 
 void Bullet::Tick()
@@ -28,13 +30,12 @@ void Bullet::Frame()
 
 void Bullet::Touch( Entity& other )
 {
-	auto* asteroid = dynamic_cast< Asteroid* >( &other );
-
-	if ( asteroid == nullptr )
+	if ( &other == m_owner )
 		return;
 
-	Game::s_player->AddScore( 10 );
+	if ( m_owner == Game::s_player )
+		Game::s_player->AddScore( other.CalculateReward() );
 
 	Delete();
-	asteroid->Delete();
+	other.TakeHit();
 }

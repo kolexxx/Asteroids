@@ -47,6 +47,9 @@ void Entity::CheckCollisions()
 			auto& entityA = *s_all[i];
 			auto& entityB = *s_all[j];
 
+			if ( entityA.m_isDeleted || entityB.m_isDeleted )
+				continue;
+
 			auto maxLeft = std::max( entityA.m_position.x - entityA.m_BBox.x / 2.f, entityB.m_position.x - entityB.m_BBox.x / 2.f );
 			auto minRight = std::min( entityA.m_position.x + entityA.m_BBox.x / 2.f, entityB.m_position.x + entityB.m_BBox.x / 2.f );
 

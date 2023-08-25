@@ -6,6 +6,7 @@
 #include "Time.hpp"
 #include "Input.hpp"
 #include "Asteroid.hpp"
+#include "Saucer.hpp"
 #include "Sound.hpp"
 
 void Game::Start()
@@ -15,7 +16,7 @@ void Game::Start()
 
 	Graphics::Init();
 	Sound::Init();
-	
+
 	Asteroid::Textures =
 	{
 		Graphics::LoadTexture( "res/asteroid1.bmp" ),
@@ -27,13 +28,12 @@ void Game::Start()
 	Loop();
 }
 
-const uint32_t tickTime = 1000 / 60;
-uint32_t lastTime = 0;
-uint32_t elapsedTime = 0;
-
 void Game::Loop()
 {
 	auto timeUntilAsteroidSpawn = TimeUntil();
+	uint32_t lastTime = 0;
+	uint32_t elapsedTime = 0;
+	bool spawningAsteroids = false;
 	srand( Time::Ticks() );
 
 	while ( s_isRunning )
@@ -45,21 +45,32 @@ void Game::Loop()
 
 		if ( s_player == nullptr )
 		{
-			Graphics::DrawText( "PRESS SPACE TO START", Vector2( WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f ), true );
+			Graphics::DrawText( "PRESS SPACE TO START", Vector2( WINDOW_WIDTH, WINDOW_HEIGHT ) / 2.f, true );
 
 			if ( Input::Pressed( ' ' ) )
 			{
 				Entity::ClearList();
 				s_player = new Player();
-				timeUntilAsteroidSpawn = 0.f;
+				s_asteroidsToSpawn = 5;
 			}
-		} 
+		}
 		else
 		{
-			if ( timeUntilAsteroidSpawn && Asteroid::NumOfAsteroids < MAX_ASTEROIDS )
+			if ( !spawningAsteroids && s_numOfEnemies == 0 )
 			{
-				new Asteroid( 3 );
-				timeUntilAsteroidSpawn = 5.f;
+				spawningAsteroids = true;
+				timeUntilAsteroidSpawn = 2.f;
+			}
+			else if ( spawningAsteroids && timeUntilAsteroidSpawn )
+			{
+				spawningAsteroids = false;
+				s_timeUntilSaucerSpawn = 12.f;
+				SpawnEnemies();
+			}
+
+			if ( !spawningAsteroids && s_timeUntilSaucerSpawn && s_saucer == nullptr )
+			{
+				s_saucer = new Saucer( rand() % 10 <= 3 );
 			}
 
 			Entity::UpdateList();
@@ -75,13 +86,21 @@ void Game::Loop()
 		Graphics::Present();
 		elapsedTime = Time::Ticks() - lastTime;
 
-		if ( tickTime > elapsedTime )
+		if ( TICK_TIME > elapsedTime )
 		{
-			SDL_Delay( tickTime - elapsedTime );
+			SDL_Delay( TICK_TIME - elapsedTime );
 		}
 
 		Time::s_delta = ( Time::Ticks() - lastTime ) / 1000.f;
 	}
+}
+
+void Game::SpawnEnemies()
+{
+	for ( auto i = 0; i < s_asteroidsToSpawn; i++ )
+		new Asteroid( 3 );
+
+	s_asteroidsToSpawn++;
 }
 
 void Game::Quit()
@@ -92,6 +111,10 @@ void Game::Quit()
 	s_isRunning = false;
 }
 
-bool Game::s_isRunning;
+uint32_t Game::s_asteroidsToSpawn = 5;
+TimeUntil Game::s_timeUntilSaucerSpawn = {};
+bool Game::s_isRunning = false;
 SDL_Window* Game::s_window = nullptr;
+uint32_t Game::s_numOfEnemies = 0;
 Player* Game::s_player = nullptr;
+Saucer* Game::s_saucer = nullptr;

@@ -1,7 +1,6 @@
 #include "Player.hpp"
 
 #include "Sound.hpp"
-#include "Asteroid.hpp"
 #include "Bullet.hpp"
 #include "Input.hpp"
 #include <sstream>
@@ -27,8 +26,6 @@ Player::~Player()
 		m_thrustSoundChannel = -1;
 	}
 }
-
-bool looping = false;
 
 void Player::Tick()
 {
@@ -65,9 +62,8 @@ void Player::Tick()
 
 	if ( m_timeUntilCanFire && Input::Pressed( ' ' ) )
 	{
-		Sound::Play( "res/fire.wav" );
-		new Bullet( m_position + forward * 5, m_angle );
-		m_timeUntilCanFire = 0.25f;
+		new Bullet( this, m_position + forward * 5, m_angle );
+		m_timeUntilCanFire = 0.1f;
 	}
 }
 
@@ -76,9 +72,9 @@ void Player::Frame()
 	std::ostringstream out;
 	out << "SCORE:" << m_score;
 
-	Graphics::DrawText( out.str().c_str(), Vector2( 10, 50 ) );
+	Graphics::DrawText( out.str().c_str(), Vector2( 10, 5 ) );
 
-	auto position = Vector2( 20, 30 );
+	auto position = Vector2( 20, 50 );
 	for ( auto i = 0; i < m_lives; i++ )
 	{
 		Vector2 points[] =
@@ -117,14 +113,12 @@ void Player::Frame()
 void Player::Touch( Entity& other )
 {
 	if ( !m_respawnTime )
-	{
 		m_respawnTime += Time::Delta();
-		return;
-	}
+}
 
-	auto* asteroid = dynamic_cast< Asteroid* >( &other );
-
-	if ( asteroid == nullptr )
+void Player::TakeHit()
+{
+	if ( !m_respawnTime )
 		return;
 
 	if ( m_lives-- == 1 )
@@ -132,7 +126,7 @@ void Player::Touch( Entity& other )
 	else
 		Reset();
 
-	asteroid->Delete();
+	Sound::Play( "res/bangLarge.wav" );
 }
 
 void Player::Reset()

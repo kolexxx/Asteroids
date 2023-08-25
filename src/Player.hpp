@@ -13,6 +13,7 @@ public:
 	void Tick() override;
 	void Frame() override;
 	void Touch( Entity& other ) override;
+	void TakeHit() override;
 	void Reset();
 	void AddScore( uint32_t score );
 

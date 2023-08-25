@@ -71,7 +71,7 @@ void Graphics::DrawRect( Vector2 dim, Vector2 position, float angle, SDL_Texture
 	SDL_RenderGeometry( s_renderer, texture, vertices, 4, indices, 6 );
 }
 
-void Graphics::DrawTriangle( Vector2 points[3], Vector2 position, float angle)
+void Graphics::DrawTriangle( Vector2 points[3], Vector2 position, float angle )
 {
 	SDL_SetRenderDrawColor( s_renderer, 255, 255, 255, 255 );
 
@@ -91,6 +91,11 @@ void Graphics::DrawTriangle( Vector2 points[3], Vector2 position, float angle)
 
 SDL_Texture* Graphics::LoadTexture( const char* path )
 {
+	auto it = s_textures.find( path );
+
+	if ( it != s_textures.end() )
+		return it->second;	
+
 	auto* surface = SDL_LoadBMP( path );
 	auto* texture = SDL_CreateTextureFromSurface( s_renderer, surface );
 
@@ -101,3 +106,4 @@ SDL_Texture* Graphics::LoadTexture( const char* path )
 
 SDL_Renderer* Graphics::s_renderer = nullptr;
 TTF_Font* Graphics::s_font = nullptr;
+std::unordered_map<std::string, SDL_Texture*> Graphics::s_textures = {};

@@ -2,6 +2,8 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <string>
+#include <unordered_map>
 #include "Math/Vector2.hpp"
 
 class Graphics
@@ -19,6 +21,7 @@ public:
 private:
 	static SDL_Renderer* s_renderer;
 	static TTF_Font* s_font;
+	static std::unordered_map<std::string, SDL_Texture*> s_textures;
 
 	friend class Game;
 };
