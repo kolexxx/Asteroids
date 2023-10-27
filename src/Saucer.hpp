@@ -6,12 +6,12 @@
 class Saucer : public Entity
 {
 public:
-	Saucer( bool small  );
+	Saucer(bool small);
 	~Saucer();
 
 	void Tick() override;
 	void Frame() override;
-	void Touch( Entity& other ) override;
+	void Touch(Entity& other) override;
 	uint32_t CalculateReward() override;
 
 private:
