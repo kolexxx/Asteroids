@@ -16,6 +16,7 @@ public:
 	static void DrawText( const char* text, Vector2 position, bool centerAtPos = false );
 	static void DrawRect( Vector2 dim, Vector2 pos, float angle, SDL_Texture* texture = nullptr );
 	static void DrawTriangle( Vector2 points[3], Vector2 position, float angle);
+	static void DrawLine(Vector2& start, Vector2& end);
 	static SDL_Texture* LoadTexture( const char* path );
 
 private:

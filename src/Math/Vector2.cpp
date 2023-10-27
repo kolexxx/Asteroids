@@ -2,68 +2,91 @@
 
 #include <math.h>
 
-const Vector2 Vector2::Right = Vector2( 1, 0 );
-const Vector2 Vector2::Left = Vector2( -1, 0 );
-const Vector2 Vector2::Up = Vector2( 0, 1 );
-const Vector2 Vector2::Down = Vector2( 0, -1 );
+const Vector2 Vector2::UnitX = Vector2(1, 0);
+const Vector2 Vector2::UnitY = Vector2(0, 1);
 
-Vector2::Vector2() : Vector2( 0, 0 ) {}
+Vector2::Vector2() : Vector2(0, 0) {}
 
-Vector2::Vector2( float x, float y ) : x( x ), y( y ) {}
+Vector2::Vector2(float x, float y) : x(x), y(y) {}
 
-float Vector2::DistanceBetween( const Vector2& other ) const
+Vector2::Vector2(float angle) : x(cosf(angle)), y(sinf(angle)) {}
+
+float Vector2::DistanceBetween(const Vector2& other) const
 {
-	return ( *this - other ).Length();
+	return (*this - other).Length();
 }
 
 float Vector2::Length() const
 {
-	return sqrtf( x * x + y * y );
+	return sqrtf(x * x + y * y);
 }
 
 Vector2 Vector2::Normal() const
 {
 	const auto length = Length();
 
-	return Vector2( x / length, y / length );
+	return Vector2(x / length, y / length);
 }
 
-bool Vector2::operator==( const Vector2& other ) const
+Vector2 Vector2::Right() const
+{
+	return Vector2(-y, x);
+}
+
+Vector2 Vector2::Left() const
+{
+	return Vector2(y, -x);
+}
+
+bool Vector2::operator==(const Vector2& other) const
 {
 	return x == other.x && y == other.y;
 }
 
-Vector2 Vector2::operator*( float scalar ) const
+Vector2& Vector2::operator+=(const Vector2& other)
 {
-	return Vector2( x * scalar, y * scalar );
+	x += other.x;
+	y += other.y;
+
+	return *this;
 }
 
-Vector2 Vector2::operator/( float scalar ) const
+Vector2 Vector2::operator*(float scalar) const
 {
-	return Vector2( x / scalar, y / scalar );
+	return Vector2(x * scalar, y * scalar);
 }
 
-Vector2 Vector2::operator+( const Vector2& other ) const
+Vector2 Vector2::operator/(float scalar) const
 {
-	return Vector2( x + other.x, y + other.y );
+	return Vector2(x / scalar, y / scalar);
 }
 
-Vector2 Vector2::operator-( const Vector2& other ) const
+Vector2 Vector2::operator+(const Vector2& other) const
 {
-	return Vector2( x - other.x, y - other.y );
+	return Vector2(x + other.x, y + other.y);
 }
 
-float Vector2::operator*( const Vector2& other ) const
+Vector2 Vector2::operator-(const Vector2& other) const
+{
+	return Vector2(x - other.x, y - other.y);
+}
+
+float Vector2::operator*(const Vector2& other) const
 {
 	return x * other.x + y * other.y;
 }
 
-Vector2::operator SDL_FPoint()
+Vector2 Vector2::operator-() const
 {
-	return *( SDL_FPoint* ) this;
+	return Vector2(-x, -y);
 }
 
-std::ostream& operator<<( std::ostream& os, const Vector2& vector )
+Vector2::operator SDL_FPoint()
+{
+	return *(SDL_FPoint*)this;
+}
+
+std::ostream& operator<<(std::ostream& os, const Vector2& vector)
 {
 	os << '(' << vector.x << ',' << vector.y << ')';
 

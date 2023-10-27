@@ -16,6 +16,8 @@ public:
 	void TakeHit() override;
 	void Reset();
 	void AddScore( uint32_t score );
+	bool IsRespawning();
+	uint32_t GetScore();
 
 private:
 	uint32_t m_lives;

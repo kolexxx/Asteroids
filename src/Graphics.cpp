@@ -5,43 +5,43 @@
 
 void Graphics::Init()
 {
-	s_renderer = SDL_CreateRenderer( Game::Window(), nullptr, SDL_RENDERER_ACCELERATED );
+	s_renderer = SDL_CreateRenderer(Game::Window(), nullptr, SDL_RENDERER_ACCELERATED);
 
 	TTF_Init();
-	s_font = TTF_OpenFont( "res/font.ttf", 36 );
+	s_font = TTF_OpenFont("res/font.ttf", 36);
 }
 
 void Graphics::Clear()
 {
-	SDL_SetRenderDrawColor( s_renderer, 0, 0, 0, 255 );
-	SDL_RenderClear( s_renderer );
+	SDL_SetRenderDrawColor(s_renderer, 0, 0, 0, 255);
+	SDL_RenderClear(s_renderer);
 }
 
 void Graphics::Present()
 {
-	SDL_RenderPresent( s_renderer );
+	SDL_RenderPresent(s_renderer);
 }
 
-void Graphics::DrawText( const char* text, Vector2 pos, bool centerAtPos )
+void Graphics::DrawText(const char* text, Vector2 pos, bool centerAtPos)
 {
-	auto* surface = TTF_RenderText_Solid( s_font, text, { 255,255,255, 255 } );
-	auto* texture = SDL_CreateTextureFromSurface( s_renderer, surface );
+	auto* surface = TTF_RenderText_Solid(s_font, text, { 255,255,255, 255 });
+	auto* texture = SDL_CreateTextureFromSurface(s_renderer, surface);
 	SDL_FRect dest = { pos.x, pos.y, surface->w,surface->h };
 
-	if ( centerAtPos )
+	if (centerAtPos)
 	{
 		dest.x -= surface->w / 2.f;
 		dest.y -= surface->h / 2.f;
 	}
 
-	SDL_RenderTexture( s_renderer, texture, nullptr, &dest );
-	SDL_DestroyTexture( texture );
-	SDL_DestroySurface( surface );
+	SDL_RenderTexture(s_renderer, texture, nullptr, &dest);
+	SDL_DestroyTexture(texture);
+	SDL_DestroySurface(surface);
 }
 
-void Graphics::DrawRect( Vector2 dim, Vector2 position, float angle, SDL_Texture* texture )
+void Graphics::DrawRect(Vector2 dim, Vector2 position, float angle, SDL_Texture* texture)
 {
-	SDL_SetRenderDrawColor( s_renderer, 255, 255, 255, 255 );
+	SDL_SetRenderDrawColor(s_renderer, 255, 255, 255, 255);
 
 	auto halfWidth = dim.x / 2.f;
 	auto halfHeight = dim.y / 2.f;
@@ -54,8 +54,8 @@ void Graphics::DrawRect( Vector2 dim, Vector2 position, float angle, SDL_Texture
 		{ -halfWidth, -halfHeight }
 	};
 
-	auto rotation = Matrix3x3::Rotation( angle );
-	auto transform = Matrix3x3::Transform( position );
+	auto rotation = Matrix3x3::Rotation(angle);
+	auto transform = Matrix3x3::Transform(position);
 	auto matrix = transform * rotation;
 
 	SDL_Vertex vertices[4] =
@@ -68,15 +68,15 @@ void Graphics::DrawRect( Vector2 dim, Vector2 position, float angle, SDL_Texture
 
 	int indices[6] = { 0, 1, 2, 1, 2 ,3 };
 
-	SDL_RenderGeometry( s_renderer, texture, vertices, 4, indices, 6 );
+	SDL_RenderGeometry(s_renderer, texture, vertices, 4, indices, 6);
 }
 
-void Graphics::DrawTriangle( Vector2 points[3], Vector2 position, float angle )
+void Graphics::DrawTriangle(Vector2 points[3], Vector2 position, float angle)
 {
-	SDL_SetRenderDrawColor( s_renderer, 255, 255, 255, 255 );
+	SDL_SetRenderDrawColor(s_renderer, 255, 255, 255, 255);
 
-	auto rotation = Matrix3x3::Rotation( angle );
-	auto transform = Matrix3x3::Transform( position );
+	auto rotation = Matrix3x3::Rotation(angle);
+	auto transform = Matrix3x3::Transform(position);
 	auto matrix = transform * rotation;
 
 	SDL_Vertex vertices[3] =
@@ -86,20 +86,26 @@ void Graphics::DrawTriangle( Vector2 points[3], Vector2 position, float angle )
 		{matrix * points[2], {255, 255, 255, 255}, {1, 1}}
 	};
 
-	SDL_RenderGeometry( s_renderer, nullptr, vertices, 3, nullptr, 0 );
+	SDL_RenderGeometry(s_renderer, nullptr, vertices, 3, nullptr, 0);
 }
 
-SDL_Texture* Graphics::LoadTexture( const char* path )
+void Graphics::DrawLine(Vector2& start, Vector2& end)
 {
-	auto it = s_textures.find( path );
+	SDL_SetRenderDrawColor(s_renderer, 255, 255, 255, 255);
+	SDL_RenderLine(s_renderer, start.x, start.y, end.x, end.y);
+}
 
-	if ( it != s_textures.end() )
-		return it->second;	
+SDL_Texture* Graphics::LoadTexture(const char* path)
+{
+	auto it = s_textures.find(path);
 
-	auto* surface = SDL_LoadBMP( path );
-	auto* texture = SDL_CreateTextureFromSurface( s_renderer, surface );
+	if (it != s_textures.end())
+		return it->second;
 
-	SDL_DestroySurface( surface );
+	auto* surface = SDL_LoadBMP(path);
+	auto* texture = SDL_CreateTextureFromSurface(s_renderer, surface);
+
+	SDL_DestroySurface(surface);
 
 	return texture;
 }
