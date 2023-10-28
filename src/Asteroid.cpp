@@ -42,6 +42,10 @@ Asteroid::~Asteroid()
 
 	Sound::Play( s_boomSounds[m_level - 1] );
 
+	//
+	// Spawn two asteroids one level lower if aren't
+	// the smallest asteroid.
+	//
 	if ( m_level <= 1 )
 		return;
 
@@ -56,6 +60,7 @@ void Asteroid::Frame()
 
 void Asteroid::Touch( Entity& other )
 {
+	// Don't collide with another asteroid.
 	if ( dynamic_cast< Asteroid* >( &other ) != nullptr )
 		return;
 

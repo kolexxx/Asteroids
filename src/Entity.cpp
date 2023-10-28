@@ -15,11 +15,15 @@ Entity::Entity(Vector2 position, Vector2 BBox, float angle) :
 
 void Entity::Tick()
 {
+	//
+	// Increase our position and angle by their respective velocities.
+	//
 	m_angle += m_angularVelocity * Time::Delta();
 	m_position += m_velocity * Time::Delta();
 
+	//
 	// Screen wrapping.
-
+	//
 	auto halfWidth = m_BBox.x / 2.f;
 	auto halfHeight = m_BBox.y / 2.f;
 

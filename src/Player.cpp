@@ -29,11 +29,16 @@ Player::~Player()
 
 void Player::Tick()
 {
+	// We are respawning, we shouldn't do any logic.
 	if (!m_respawnTime)
 		return;
 
 	m_isDead = false;
 
+	//
+	// The ship changes it's rotation by pressing A or D. We set
+	// the angular velocity so the angle changes by the delta time.
+	//
 	if (Input::Down('A'))
 		m_angularVelocity = -3.14f * 1.5f;
 	else if (Input::Down('D'))
@@ -41,10 +46,19 @@ void Player::Tick()
 	else
 		m_angularVelocity = 0.f;
 
+	// Get the direction we want to move at.
 	auto forward = Vector2(m_angle);
+
+	// The force that will be applied to the ship.
 	auto force = Vector2();
+
+	// The coefficient for the drag of the ship.
 	auto q = 0.8f;
 
+	//
+	// If we are pressing W, we want to apply for force in the
+	// direction we want to move. Also play a sound for the force.
+	//
 	if (Input::Down('W'))
 	{
 		force = forward * 400.f;
@@ -57,11 +71,20 @@ void Player::Tick()
 		Sound::Stop(m_thrustSoundChannel);
 		m_thrustSoundChannel = -1;
 	}
-
+	
+	//
+	// The solution for v in the equation m*a = F - q * v, where a is the acceleration, v the velocity
+	// and F the force being applied. There is also drag which is proportional to the velocity.
+	//
 	m_velocity = (force - (force - m_velocity * q) * expf(-q * Time::Delta())) * (1.0f / q);
 
+	// Apply our velocities and check to screenwrap.
 	Entity::Tick();
 
+	//
+	// Fire a bullet in the direction we are facing 
+	// if we pressed the spacebar.
+	//
 	if (m_timeUntilCanFire && Input::Pressed(' '))
 	{
 		new Bullet(this, m_position + forward * 5, m_angle);
@@ -114,8 +137,11 @@ void Player::Frame()
 
 void Player::Touch(Entity& other)
 {
+	//
+	// If we touched any other entity, increase our respawn time.
+	//
 	if (!m_respawnTime)
-		m_respawnTime += Time::Delta();
+		m_respawnTime += 1.f;
 }
 
 void Player::TakeHit()
@@ -153,6 +179,9 @@ void Player::AddScore(uint32_t score)
 	auto oldScore = m_score;
 	m_score += score;
 
+	//
+	// The player earns an extra life every 10000 points.
+	//
 	if (oldScore / 10000 != m_score / 10000)
 	{
 		m_lives++;

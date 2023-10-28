@@ -39,12 +39,12 @@ Saucer::~Saucer()
 
 void Saucer::Tick()
 {
-	//
-	// Saucers disappear when they go off screen horizontally.
-	//
 	auto halfWidth = m_BBox.x / 2.f;
 	auto halfHeight = m_BBox.y / 2.f;
 
+	//
+	// Saucers disappear when they go off screen horizontally.
+	//
 	if (m_position.x - halfWidth > WINDOW_WIDTH || m_position.x + halfWidth < 0)
 	{
 		Delete();
@@ -63,6 +63,7 @@ void Saucer::Tick()
 	{
 		m_timeUntilCanFire = 1.f;
 
+		// Choose a random angle.
 		auto angle = static_cast<float>(rand());
 
 		//
@@ -71,11 +72,19 @@ void Saucer::Tick()
 		//
 		if (m_small && !Game::s_player->IsRespawning())
 		{
+			// Get the vector pointing from the saucer to the player.
 			auto dir = Game::s_player->Position() - m_position;
-			auto tan = 1.f - std::min(1.f, float(Game::s_player->GetScore()) / 20000.f);
 
-			tan *= static_cast <float> (rand()) / (static_cast <float> (RAND_MAX)) * 2 - 1;
-			dir += dir.Right() * tan * (rand() & 1 ? -1.f : 1.f);
+			// Calculate the tangent.
+			auto tan = 1.f - std::min(1.f, float(Game::s_player->GetScore()) / 40000.f);
+
+			// Remap our tangent to the interval -tan to tan.
+			tan *= static_cast <float> (rand()) / (static_cast <float> (RAND_MAX)) * 2 - 1.f;
+
+			// Offset our ideal direction by going left or right.
+			dir += dir.Right() * tan;
+
+			// Get our new angle.
 			angle = atan2f(dir.y, dir.x);
 		}
 
